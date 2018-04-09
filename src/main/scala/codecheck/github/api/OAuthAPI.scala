@@ -1,6 +1,7 @@
 package codecheck.github.api
 
 import java.net.URLEncoder
+import scala.collection.immutable.Seq
 import scala.concurrent.Promise
 import scala.concurrent.Future
 import org.json4s.jackson.JsonMethods

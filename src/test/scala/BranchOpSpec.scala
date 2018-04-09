@@ -25,7 +25,7 @@ class BranchOpSpec extends FunSpec
   describe("listBranches") {
     it("with valid repo should succeed") {
       val list = Await.result(api.listBranches(user, userRepo), TIMEOUT)
-      assert(list.length > 0)
+      assert(list.size > 0)
       assert(list.exists(_.name == "master"))
     }
   }

@@ -5,6 +5,7 @@ import models._
 
 import org.scalatest.FunSpec
 import org.scalatest.BeforeAndAfterAll
+import scala.collection.immutable.Seq
 import scala.concurrent.Await
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
@@ -104,13 +105,13 @@ class IssueOpSpec extends FunSpec with api.Constants with BeforeAndAfterAll {
   describe("listAllIssues(option)") {
     it("shold return at least one issue.") {
       val result = Await.result(api.listAllIssues(), TIMEOUT)
-      assert(result.length > 0)
+      assert(result.size > 0)
     }
 
     it("shold return only two issues when using options.") {
       val option = IssueListOption(IssueFilter.created, IssueState.open, Seq("question"), since=Some(nTime))
       val result = Await.result(api.listAllIssues(option), TIMEOUT)
-      assert(result.length > 0)
+      assert(result.size > 0)
       assert(result.head.title == "test issue")
     }
   }
@@ -118,13 +119,13 @@ class IssueOpSpec extends FunSpec with api.Constants with BeforeAndAfterAll {
   describe("listUserIssues(option)") {
     it("shold return at least one issue.") {
       val result = Await.result(api.listUserIssues(), TIMEOUT)
-      assert(result.length > 0)
+      assert(result.size > 0)
     }
 
     it("shold return only one issues when using options.") {
       val option = IssueListOption(IssueFilter.created, IssueState.open, Seq("question"), since=Some(nTime))
       val result = Await.result(api.listUserIssues(option), TIMEOUT)
-      assert(result.length > 0)
+      assert(result.size > 0)
       assert(result.head.title == "test issue")
     }
   }
@@ -132,26 +133,26 @@ class IssueOpSpec extends FunSpec with api.Constants with BeforeAndAfterAll {
   describe("listRepositoryIssues(owner, repo, option)") {
     it("should return at least one issue from user's own repo.") {
       val result = Await.result(api.listRepositoryIssues(user, userRepo), TIMEOUT)
-      assert(result.length > 0)
+      assert(result.size > 0)
     }
 
     it("should return at least one issue from organization's repo.") {
       val result = Await.result(api.listRepositoryIssues(organization, tRepo), TIMEOUT)
-      assert(result.length > 0)
+      assert(result.size > 0)
     }
 
     it("should return only one issue from user's own repo when using options.") {
       val option = new IssueListOption4Repository(Some(MilestoneSearchOption(1)), IssueState.open, Some(user), Some(user), labels=Seq("question"), since=Some(nTime))
       val result = Await.result(api.listRepositoryIssues(user, userRepo, option), TIMEOUT)
       //showResponse(option.q)
-      assert(result.length == 1)
+      assert(result.size == 1)
       assert(result.head.title == "test issue")
     }
 
     it("should return only one issue from organization's repo when using options.") {
-      val option = new IssueListOption4Repository(None, IssueState.open, None, Some(user), labels=Nil, since=Some(nTime))
+      val option = new IssueListOption4Repository(None, IssueState.open, None, Some(user), labels=Seq.empty[String], since=Some(nTime))
       val result = Await.result(api.listRepositoryIssues(organization, tRepo, option), TIMEOUT)
-      assert(result.length == 1)
+      assert(result.size == 1)
       assert(result.head.title == "test issue")
     }
   }

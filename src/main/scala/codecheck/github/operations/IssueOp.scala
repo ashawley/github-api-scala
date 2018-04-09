@@ -1,6 +1,7 @@
 package codecheck.github.operations
 
 import java.net.URLEncoder
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -17,26 +18,26 @@ import codecheck.github.models.IssueListOption4Repository
 trait IssueOp {
   self: GitHubAPI =>
 
-  private def doList(path: String): Future[List[Issue]] = {
+  private def doList(path: String): Future[Seq[Issue]] = {
     exec("GET", path).map(
       _.body match {
-        case JArray(arr) => arr.map(v => Issue(v))
+        case JArray(arr) => arr.map(v => Issue(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     )
   }
 
   //Only listAll/User/OrgIssues return Repository object
-  def listAllIssues(option: IssueListOption = IssueListOption()): Future[List[Issue]] =
+  def listAllIssues(option: IssueListOption = IssueListOption()): Future[Seq[Issue]] =
     doList("/issues" + option.q)
 
-  def listUserIssues(option: IssueListOption = IssueListOption()): Future[List[Issue]] =
+  def listUserIssues(option: IssueListOption = IssueListOption()): Future[Seq[Issue]] =
     doList("/user/issues" + option.q)
 
-  def listOrgIssues(org: String, option: IssueListOption = IssueListOption()): Future[List[Issue]] =
+  def listOrgIssues(org: String, option: IssueListOption = IssueListOption()): Future[Seq[Issue]] =
     doList(s"/orgs/$org/issues" + option.q)
 
-  def listRepositoryIssues(owner: String, repo: String, option: IssueListOption4Repository = IssueListOption4Repository()): Future[List[Issue]] =
+  def listRepositoryIssues(owner: String, repo: String, option: IssueListOption4Repository = IssueListOption4Repository()): Future[Seq[Issue]] =
     doList(s"/repos/$owner/$repo/issues" + option.q)
 
   def getIssue(owner: String, repo: String, number: Long): Future[Option[Issue]] =

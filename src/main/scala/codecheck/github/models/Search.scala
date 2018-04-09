@@ -1,5 +1,6 @@
 package codecheck.github.models
 
+import scala.collection.immutable.Seq
 import org.json4s.JValue
 import org.json4s.JArray
 
@@ -71,8 +72,8 @@ case class SearchRepositoryResult(value: JValue) extends AbstractJson(value) {
  def total_count: Long = get("total_count").toLong
  def incomplete_results: Boolean = boolean("incomplete_results")
  lazy val items = (value \ "items") match {
-    case JArray(arr) => arr.map(Repository(_))
-    case _ => Nil
+    case JArray(arr) => arr.map(Repository(_)).to[Seq]
+    case _ => Seq.empty[Repository]
   }
 }
 
@@ -97,8 +98,8 @@ case class SearchCodeResult(value: JValue) extends AbstractJson(value) {
  def total_count: Long = get("total_count").toLong
  def incomplete_results: Boolean = boolean("incomplete_results")
  lazy val items = (value \ "items") match {
-    case JArray(arr) => arr.map(SearchCodeItem(_))
-    case _ => Nil
+    case JArray(arr) => arr.map(SearchCodeItem(_)).to[Seq]
+    case _ => Seq.empty[SearchCodeItem]
   }
 }
 
@@ -112,8 +113,8 @@ case class SearchIssueResult(value: JValue) extends AbstractJson(value) {
  def total_count: Long = get("total_count").toLong
  def incomplete_results: Boolean = boolean("incomplete_results")
  lazy val items = (value \ "items") match {
-    case JArray(arr) => arr.map(Issue(_))
-    case _ => Nil
+    case JArray(arr) => arr.map(Issue(_)).to[Seq]
+    case _ => Seq.empty[Issue]
   }
 }
 
@@ -127,7 +128,7 @@ case class SearchUserResult(value: JValue) extends AbstractJson(value) {
  def total_count: Long = get("total_count").toLong
  def incomplete_results: Boolean = boolean("incomplete_results")
  lazy val items = (value \ "items") match {
-    case JArray(arr) => arr.map(User(_))
-    case _ => Nil
+    case JArray(arr) => arr.map(User(_)).to[Seq]
+    case _ => Seq.empty[User]
   }
 }

@@ -1,5 +1,6 @@
 package codecheck.github.models
 
+import scala.collection.immutable.Seq
 import org.json4s.JValue
 import org.json4s.JNothing
 import org.json4s.JNull
@@ -65,10 +66,10 @@ class AbstractJson(value: JValue) {
     path.split("\\.").foldLeft(value) { (v, s) =>
       v \ s
     } match {
-      case JNothing => Nil
-      case JNull => Nil
-      case v: JArray => v.values.map(_.asInstanceOf[T])
-      case v: JValue => List(v.asInstanceOf[T])
+      case JNothing => Seq.empty[T]
+      case JNull => Seq.empty[T]
+      case v: JArray => v.values.to[Seq].map(_.asInstanceOf[T])
+      case v: JValue => Seq(v.asInstanceOf[T])
     }
   }
 

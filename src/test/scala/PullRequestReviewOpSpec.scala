@@ -4,6 +4,7 @@ package operations
 import models._
 
 import org.scalatest.FunSpec
+import scala.collection.immutable.Seq
 import scala.concurrent.Await
 import java.util.Date
 
@@ -12,7 +13,7 @@ class PullRequestReviewOpSpec extends FunSpec with api.Constants {
   describe("listPullRequestReviews") {
     it("with valid repo should succeed") {
       val list = Await.result(api.listPullRequestReviews(otherUser, otherUserRepo, 47), TIMEOUT)
-      assert(list.length >= 0)
+      assert(list.size >= 0)
       assert(list.exists(_.id >= 0))
       assert(list.exists(_.state == PullRequestReviewState.approved))
       assert(list.exists(_.commit_id.size == shaSize))

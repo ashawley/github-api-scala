@@ -12,7 +12,7 @@ class PullRequestOpSpec extends FunSpec with api.Constants {
   describe("listPullRequests") {
     it("with valid repo should succeed") {
       val list = Await.result(api.listPullRequests(otherUser, otherUserRepo), TIMEOUT)
-      assert(list.length >= 0)
+      assert(list.size >= 0)
       assert(list.exists(_.state == IssueState.open))
       assert(list.exists(_.mergeable == None))
       assert(list.exists(_.merged == None))

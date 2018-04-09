@@ -1,6 +1,7 @@
 package codecheck.github
 package models
 
+import scala.collection.immutable.Seq
 import org.json4s.JsonDSL._
 import org.json4s.JNull
 import org.json4s.JValue

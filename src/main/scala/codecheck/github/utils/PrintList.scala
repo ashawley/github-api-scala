@@ -1,5 +1,7 @@
 package codecheck.github.utils
 
+import scala.collection.immutable.Seq
+
 case class PrintList(headers: String*) {
   def format(lens: Seq[Int], row: Seq[Any]): Unit = {
     lens.zip(row).foreach { case (n, s) =>
@@ -21,9 +23,9 @@ case class PrintList(headers: String*) {
         }
       }.map(_ + 2)
 
-      format(lens, headers)
+      format(lens.to[Seq], headers.to[Seq])
       println("-" * lens.sum)
-      items.foreach(row => format(lens,row))
+      items.foreach(row => format(lens.to[Seq],row))
    }
   }
 }

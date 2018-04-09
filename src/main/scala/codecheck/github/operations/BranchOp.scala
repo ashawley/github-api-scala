@@ -1,6 +1,7 @@
 package codecheck.github.operations
 
 import java.net.URLEncoder
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -15,10 +16,10 @@ import codecheck.github.models.Branch
 trait BranchOp {
   self: GitHubAPI =>
 
-  def listBranches(owner: String, repo: String): Future[List[BranchListItem]] = {
+  def listBranches(owner: String, repo: String): Future[Seq[BranchListItem]] = {
     exec("GET", s"/repos/$owner/$repo/branches").map(
       _.body match {
-        case JArray(arr) => arr.map(v => BranchListItem(v))
+        case JArray(arr) => arr.map(v => BranchListItem(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     )

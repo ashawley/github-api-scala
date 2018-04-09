@@ -1,5 +1,6 @@
 package codecheck.github.events
 
+import scala.collection.immutable.Seq
 import org.json4s.JValue
 import org.json4s.JArray
 import codecheck.github.models.AbstractJson
@@ -29,7 +30,7 @@ case class PushEvent(name: String, value: JValue) extends AbstractJson(value) wi
   lazy val base_ref = opt("base_ref")
   lazy val head_commit = PushCommit(value \ "head_commit")
   lazy val commits = (value \ "commits") match {
-    case JArray(arr) => arr.map(PushCommit(_))
+    case JArray(arr) => arr.map(PushCommit(_)).to[Seq]
     case _ => Seq.empty[PushCommit]
   }
   lazy val repository = Repository(value \ "repository")

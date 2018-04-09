@@ -1,5 +1,6 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.{JArray, JString}
@@ -15,28 +16,28 @@ import codecheck.github.models.LanguageList
 trait RepositoryOp {
   self: GitHubAPI =>
 
-  private def doList(path: String, option: RepositoryListOption): Future[List[Repository]] = {
+  private def doList(path: String, option: RepositoryListOption): Future[Seq[Repository]] = {
     exec("GET", path + s"?type=${option.listType}&sort=${option.sort}&direction=${option.direction}").map { res =>
       res.body match {
-        case JArray(arr) => arr.map(v => Repository(v))
+        case JArray(arr) => arr.map(v => Repository(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }
   }
-  def listOwnRepositories(option: RepositoryListOption = RepositoryListOption()): Future[List[Repository]] =
+  def listOwnRepositories(option: RepositoryListOption = RepositoryListOption()): Future[Seq[Repository]] =
     doList("/user/repos", option)
 
-  def listUserRepositories(user: String, option: RepositoryListOption = RepositoryListOption()): Future[List[Repository]] =
+  def listUserRepositories(user: String, option: RepositoryListOption = RepositoryListOption()): Future[Seq[Repository]] =
     doList(s"/users/$user/repos", option)
 
-  def listOrgRepositories(org: String, option: RepositoryListOption = RepositoryListOption()): Future[List[Repository]] =
+  def listOrgRepositories(org: String, option: RepositoryListOption = RepositoryListOption()): Future[Seq[Repository]] =
     doList(s"/orgs/$org/repos", option)
 
-  def listAllPublicRepositories(since: Long = 0): Future[List[Repository]] = {
+  def listAllPublicRepositories(since: Long = 0): Future[Seq[Repository]] = {
     val q = if (since == 0) "" else "?since=" + since
     exec("GET", "/repositories" + q).map { res =>
       res.body match {
-        case JArray(arr) => arr.map(v => Repository(v))
+        case JArray(arr) => arr.map(v => Repository(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }

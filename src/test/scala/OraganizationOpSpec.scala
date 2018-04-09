@@ -14,20 +14,20 @@ class OrganizationOpSpec extends FunSpec with api.Constants with BeforeAndAfter 
   describe("listOwnOrganizations") {
     it("should return result.") {
       val result = Await.result(api.listOwnOrganizations, TIMEOUT)
-      assert(result.length >= 0)
+      assert(result.size >= 0)
     }
   }
 
   describe("listUserOrganizations(user)") {
     it("should return at least one organization.") {
       val result = Await.result(api.listUserOrganizations(otherUser), TIMEOUT)
-      assert(result.length >= 1)
+      assert(result.size >= 1)
     }
 
     // it("should return multiple organizations if user belongs in more than one.") {
     //   val result = Await.result(api.listUserOrganizations(otherUser), TIMEOUT)
     //   println(result)
-    //   assert(result.length > 1)
+    //   assert(result.size > 1)
     // }
   }
 
@@ -42,7 +42,7 @@ class OrganizationOpSpec extends FunSpec with api.Constants with BeforeAndAfter 
         assert(org.events_url == "https://api.github.com/orgs/celestialbeings/events")
         assert(org.members_url == "https://api.github.com/orgs/celestialbeings/members{/member}")
         assert(org.public_members_url == "https://api.github.com/orgs/celestialbeings/public_members{/member}")
-        assert(org.avatar_url.length > 0)
+        assert(org.avatar_url.size > 0)
         assert(org.description == "No description")
         assert(org.name == "celestialbeings")
         assert(org.company.get == "givery")

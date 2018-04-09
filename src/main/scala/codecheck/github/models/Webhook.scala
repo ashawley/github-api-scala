@@ -1,5 +1,6 @@
 package codecheck.github.models
 
+import scala.collection.immutable.Seq
 import org.json4s.JValue
 
 class Webhook(value: JValue) extends AbstractJson(value) {
@@ -37,8 +38,8 @@ case class WebhookCreateInput(
   config: WebhookConfig,
   active: Boolean = true,
   events: Seq[String] = Seq("push"),
-  add_events: Seq[String] = Nil,
-  remove_events: Seq[String] = Nil
+  add_events: Seq[String] = Seq.empty[String],
+  remove_events: Seq[String] = Seq.empty[String]
   ) extends AbstractInput
 
 case class WebhookUpdateInput(

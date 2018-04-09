@@ -1,5 +1,6 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -13,19 +14,19 @@ import codecheck.github.models.OrganizationInput
 trait OrganizationOp {
   self: GitHubAPI =>
 
-  def listOwnOrganizations: Future[List[Organization]] = {
+  def listOwnOrganizations: Future[Seq[Organization]] = {
     self.exec("GET", s"/user/orgs").map { 
       _.body match {
-        case JArray(arr) => arr.map(new Organization(_))
+        case JArray(arr) => arr.map(new Organization(_)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }
   }
 
-  def listUserOrganizations(user: String): Future[List[Organization]] = {
+  def listUserOrganizations(user: String): Future[Seq[Organization]] = {
     self.exec("GET", s"/users/${user}/orgs").map {
       _.body match {
-        case JArray(arr) => arr.map(new Organization(_))
+        case JArray(arr) => arr.map(new Organization(_)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }

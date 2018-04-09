@@ -1,5 +1,6 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -17,10 +18,10 @@ trait PullRequestReviewOp {
     owner: String,
     repo: String,
     number: Long
-  ): Future[List[PullRequestReview]] = {
+  ): Future[Seq[PullRequestReview]] = {
     exec("GET", s"/repos/$owner/$repo/pulls/$number/reviews").map(
       _.body match {
-        case JArray(arr) => arr.map(v => PullRequestReview(v))
+        case JArray(arr) => arr.map(v => PullRequestReview(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     )

@@ -1,5 +1,6 @@
 package codecheck.github.api
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import codecheck.github.models.Label
 import codecheck.github.models.LabelInput
@@ -28,22 +29,22 @@ case class RepositoryAPI(api: GitHubAPI, owner: String, repo: String) {
     api.unassign(owner, repo, number)
 
   //LabelOp
-  def addLabels(number: Long, labels: String*): Future[List[Label]] =
+  def addLabels(number: Long, labels: String*): Future[Seq[Label]] =
     api.addLabels(owner, repo, number, labels:_*)
 
-  def replaceLabels(number: Long, labels: String*): Future[List[Label]] =
+  def replaceLabels(number: Long, labels: String*): Future[Seq[Label]] =
     api.replaceLabels(owner, repo, number, labels:_*)
 
-  def removeAllLabels(number: Long): Future[List[Label]] =
+  def removeAllLabels(number: Long): Future[Seq[Label]] =
     api.removeAllLabels(owner, repo, number)
 
-  def removeLabel(number: Long, label: String): Future[List[Label]] =
+  def removeLabel(number: Long, label: String): Future[Seq[Label]] =
     api.removeLabel(owner, repo, number, label)
 
-  def listLabels(number: Long): Future[List[Label]] =
+  def listLabels(number: Long): Future[Seq[Label]] =
     api.listLabels(owner, repo, number)
 
-  def listLabelDefs: Future[List[Label]] =
+  def listLabelDefs: Future[Seq[Label]] =
     api.listLabelDefs(owner, repo)
 
   def getLabelDef(label: String): Future[Option[Label]] =
@@ -59,7 +60,7 @@ case class RepositoryAPI(api: GitHubAPI, owner: String, repo: String) {
     api.removeLabelDef(owner, repo, label)
 
   //MilestoneOp
-  def listMilestones(option: MilestoneListOption = MilestoneListOption()): Future[List[Milestone]] =
+  def listMilestones(option: MilestoneListOption = MilestoneListOption()): Future[Seq[Milestone]] =
     api.listMilestones(owner, repo, option)
 
   def getMilestone(number: Int): Future[Option[Milestone]] =
@@ -75,7 +76,7 @@ case class RepositoryAPI(api: GitHubAPI, owner: String, repo: String) {
     api.removeMilestone(owner, repo, number)
 
   // PullRequestOp
-  def listPullRequests(option: PullRequestListOption = PullRequestListOption()): Future[List[PullRequest]] =
+  def listPullRequests(option: PullRequestListOption = PullRequestListOption()): Future[Seq[PullRequest]] =
     api.listPullRequests(owner, repo, option)
 
   def getPullRequest(number: Long): Future[Option[PullRequest]] =

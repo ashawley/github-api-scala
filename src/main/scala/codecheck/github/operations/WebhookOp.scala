@@ -1,5 +1,6 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -14,10 +15,10 @@ import codecheck.github.models.WebhookUpdateInput
 trait WebhookOp {
   self: GitHubAPI =>
 
-  def listWebhooks(owner: String, repo: String): Future[List[Webhook]] = {
+  def listWebhooks(owner: String, repo: String): Future[Seq[Webhook]] = {
     self.exec("GET", s"/repos/${owner}/${repo}/hooks").map { 
       _.body match {
-        case JArray(arr) => arr.map(new Webhook(_))
+        case JArray(arr) => arr.map(new Webhook(_)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }

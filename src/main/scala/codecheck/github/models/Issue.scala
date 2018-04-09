@@ -11,6 +11,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
 import codecheck.github.utils.ToDo
+import scala.collection.immutable.Seq
 import scala.language.implicitConversions
 
 sealed abstract class IssueState(val name: String) {
@@ -92,7 +93,7 @@ object MilestoneSearchOption {
 case class IssueListOption(
   filter: IssueFilter = IssueFilter.assigned,
   state: IssueStateFilter = IssueStateFilter.open,
-  labels: Seq[String] = Nil,
+  labels: Seq[String] = Seq.empty[String],
   sort: IssueSort = IssueSort.created,
   direction: SortDirection = SortDirection.desc,
   since: Option[DateTime] = None
@@ -108,7 +109,7 @@ case class IssueListOption4Repository(
   assignee: Option[String] = None,
   creator: Option[String] = None,
   mentioned: Option[String] = None,
-  labels: Seq[String] = Nil,
+  labels: Seq[String] = Seq.empty[String],
   sort: IssueSort = IssueSort.created,
   direction: SortDirection = SortDirection.desc,
   since: Option[DateTime] = None
@@ -127,14 +128,14 @@ case class IssueInput(
   body: Option[String] = None,
   assignee: Option[String] = None,
   milestone: Option[Int] = None,
-  labels: Seq[String] = Nil,
+  labels: Seq[String] = Seq.empty[String],
   state: Option[IssueStateFilter] = None
 ) extends AbstractInput {
   override val value: JValue = {
     val a = assignee.map { s =>
-      if (s.length == 0) JNull else JString(s)
+      if (s.size == 0) JNull else JString(s)
     }.getOrElse(JNothing)
-    val l = if (labels.length == 0) JNothing else JArray(labels.map(JString(_)).toList)
+    val l = if (labels.size == 0) JNothing else JArray(labels.map(JString(_)).toList)
 
     ("title" -> title) ~
     ("body" -> body) ~
@@ -189,8 +190,8 @@ case class Issue(value: JValue) extends AbstractJson(value) {
 
   lazy val user = new User(value \ "user")
   lazy val labels = (value \ "labels") match {
-    case JArray(arr) => arr.map(new Label(_))
-    case _ => Nil
+    case JArray(arr) => arr.map(new Label(_)).to[Seq]
+    case _ => Seq.empty[Label]
   }
 
   def state = IssueState.fromString(get("state"))
