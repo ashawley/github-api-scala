@@ -1,6 +1,7 @@
 package codecheck.github.api
 
 import java.net.URLEncoder
+import scala.collection.immutable.Iterable
 import scala.concurrent.Promise
 import scala.concurrent.Future
 import org.json4s.jackson.JsonMethods
@@ -28,7 +29,7 @@ class OAuthAPI(clientId: String, clientSecret: String, redirectUri: String, clie
     accessRequestUri +"?"+ query
   }
 
-  def requestAccessUri(state: String, scope: Seq[String]) = {
+  def requestAccessUri(state: String, scope: Iterable[String]) = {
     val params = Map[String, String](
       "client_id" -> clientId,
       "redirect_uri" -> redirectUri,

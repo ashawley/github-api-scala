@@ -1,5 +1,7 @@
 package codecheck.github.models
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
 import org.json4s.JValue
 import org.json4s.JNothing
 import org.json4s.JNull
@@ -61,16 +63,16 @@ class AbstractJson(value: JValue) {
 
   override def toString = JsonMethods.pretty(value)
 
-  def seqOpt[T](path: String): Seq[T] = {
+  def seqOpt[T](path: String): Iterable[T] = {
     path.split("\\.").foldLeft(value) { (v, s) =>
       v \ s
     } match {
-      case JNothing => Nil
-      case JNull => Nil
-      case v: JArray => v.values.map(_.asInstanceOf[T])
-      case v: JValue => List(v.asInstanceOf[T])
+      case JNothing => Seq.empty[T]
+      case JNull => Seq.empty[T]
+      case v: JArray => v.values.to[Seq].map(_.asInstanceOf[T])
+      case v: JValue => Seq(v.asInstanceOf[T])
     }
   }
 
-  def seq(path: String): Seq[String] = seqOpt(path)
+  def seq(path: String): Iterable[String] = seqOpt(path)
 }

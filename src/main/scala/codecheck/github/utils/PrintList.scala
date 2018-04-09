@@ -1,7 +1,10 @@
 package codecheck.github.utils
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
+
 case class PrintList(headers: String*) {
-  def format(lens: Seq[Int], row: Seq[Any]): Unit = {
+  def format(lens: Iterable[Int], row: Iterable[Any]): Unit = {
     lens.zip(row).foreach { case (n, s) =>
       print(s)
       print(" " * (n - s.toString.length))
@@ -9,7 +12,7 @@ case class PrintList(headers: String*) {
     println
   }
 
-  def build(items: Seq[Seq[Any]]) = {
+  def build(items: Iterable[Iterable[Any]]) = {
     if (items.size == 0) {
       println("No items")
     } else {
@@ -21,9 +24,9 @@ case class PrintList(headers: String*) {
         }
       }.map(_ + 2)
 
-      format(lens, headers)
+      format(lens.to[Seq], headers.to[Seq])
       println("-" * lens.sum)
-      items.foreach(row => format(lens,row))
+      items.foreach(row => format(lens.to[Seq],row))
    }
   }
 }

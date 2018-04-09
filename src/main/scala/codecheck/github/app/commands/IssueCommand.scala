@@ -24,7 +24,7 @@ class IssueCommand(val api: GitHubAPI) extends Command {
     org: Option[String] = None,
     filter: String = "assigned",
     state: String = "open",
-    labels: Seq[String] = Nil,
+    labels: Seq[String] = Seq.empty[String],
     sort: String = "created",
     direction: String = "desc",
     since: Option[Calendar] = None
@@ -33,7 +33,7 @@ class IssueCommand(val api: GitHubAPI) extends Command {
     def listOption = IssueListOption(
       IssueFilter.fromString(filter),
       IssueStateFilter.fromString(state),
-      labels,
+      labels.to[scala.collection.immutable.Seq],
       IssueSort.fromString(sort),
       SortDirection.fromString(direction),
       since.map(new DateTime(_))

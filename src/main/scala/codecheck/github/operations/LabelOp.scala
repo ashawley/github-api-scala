@@ -1,5 +1,7 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -14,7 +16,7 @@ import codecheck.github.models.LabelInput
 trait LabelOp {
   self: GitHubAPI =>
 
-  private def doLabels(method: String, owner: String, repo: String, number: Long, labels: Seq[String]): Future[List[Label]] = {
+  private def doLabels(method: String, owner: String, repo: String, number: Long, labels: Iterable[String]): Future[Iterable[Label]] = {
     val path = s"/repos/$owner/$repo/issues/$number/labels"
     val body = if (method == "GET") {
       JNothing
@@ -23,43 +25,43 @@ trait LabelOp {
     }
     exec(method, path, body).map {
       _.body match {
-        case JArray(arr) => arr.map(v => Label(v))
+        case JArray(arr) => arr.map(v => Label(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }
   }
 
-  def addLabels(owner: String, repo: String, number: Long, labels: String*): Future[List[Label]] = {
-    doLabels("POST", owner, repo, number, labels)
+  def addLabels(owner: String, repo: String, number: Long, labels: String*): Future[Iterable[Label]] = {
+    doLabels("POST", owner, repo, number, labels.to[Seq])
   }
 
-  def replaceLabels(owner: String, repo: String, number: Long, labels: String*): Future[List[Label]] = {
-    doLabels("PUT", owner, repo, number, labels)
+  def replaceLabels(owner: String, repo: String, number: Long, labels: String*): Future[Iterable[Label]] = {
+    doLabels("PUT", owner, repo, number, labels.to[Seq])
   }
 
-  def removeAllLabels(owner: String, repo: String, number: Long): Future[List[Label]] = {
-    doLabels("PUT", owner, repo, number, Nil)
+  def removeAllLabels(owner: String, repo: String, number: Long): Future[Iterable[Label]] = {
+    doLabels("PUT", owner, repo, number, Seq.empty[String])
   }
 
-  def removeLabel(owner: String, repo: String, number: Long, label: String): Future[List[Label]] = {
+  def removeLabel(owner: String, repo: String, number: Long, label: String): Future[Iterable[Label]] = {
     val path = s"/repos/$owner/$repo/issues/$number/labels/" + encode(label)
     exec("DELETE", path).map {
       _.body match {
-        case JArray(arr) => arr.map(v => Label(v))
+        case JArray(arr) => arr.map(v => Label(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }
   }
 
-  def listLabels(owner: String, repo: String, number: Long): Future[List[Label]] = {
-    doLabels("GET", owner, repo, number, Nil)
+  def listLabels(owner: String, repo: String, number: Long): Future[Iterable[Label]] = {
+    doLabels("GET", owner, repo, number, Seq.empty[String])
   }
 
-  def listLabelDefs(owner: String, repo: String): Future[List[Label]] = {
+  def listLabelDefs(owner: String, repo: String): Future[Iterable[Label]] = {
     val path = s"/repos/$owner/$repo/labels"
     exec("GET", path).map {
       _.body match {
-        case JArray(arr) => arr.map(v => Label(v))
+        case JArray(arr) => arr.map(v => Label(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     }

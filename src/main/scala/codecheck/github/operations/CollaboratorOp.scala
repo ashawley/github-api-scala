@@ -1,5 +1,7 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -11,11 +13,11 @@ import codecheck.github.models.Collaborator
 trait CollaboratorOp {
   self: GitHubAPI =>
 
-  def listCollaborators(owner: String,repo:String): Future[List[Collaborator]] = {
+  def listCollaborators(owner: String,repo:String): Future[Iterable[Collaborator]] = {
     val path = s"/repos/${owner}/${repo}/collaborators"
     exec("GET",path).map(
       _.body match {
-        case JArray(arr) => arr.map(v => Collaborator(v))
+        case JArray(arr) => arr.map(v => Collaborator(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     )

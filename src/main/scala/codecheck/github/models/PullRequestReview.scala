@@ -1,6 +1,8 @@
 package codecheck.github
 package models
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
 import org.json4s.JsonDSL._
 import org.json4s.JNull
 import org.json4s.JValue
@@ -8,7 +10,7 @@ import org.json4s.JValue
 case class PullRequestReviewInput(
   body: Option[String] = None,
   event: Option[PullRequestReviewStateInput] = None,
-  comments: Seq[PullRequestReviewCommentInput] = Seq.empty[PullRequestReviewCommentInput]
+  comments: Iterable[PullRequestReviewCommentInput] = Seq.empty[PullRequestReviewCommentInput]
 ) extends AbstractInput {
   override val value: JValue = {
     ("body" -> body) ~

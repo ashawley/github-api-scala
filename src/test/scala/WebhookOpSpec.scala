@@ -5,6 +5,7 @@ import models._
 
 import org.scalatest.FunSpec
 import org.scalatest.BeforeAndAfter
+import scala.collection.immutable.Seq
 import scala.concurrent.Await
 
 class WebhookOpSpec extends FunSpec with api.Constants with BeforeAndAfter {
@@ -15,7 +16,7 @@ class WebhookOpSpec extends FunSpec with api.Constants with BeforeAndAfter {
   describe("listWebhooks(owner, repo)") {
     it("should succeed with valid owner, repo.") {
       val result = Await.result(api.listWebhooks(user, userRepo), TIMEOUT)
-      assert(result.length >= 0)
+      assert(result.size >= 0)
     }
   }
 

@@ -1,5 +1,7 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -19,11 +21,11 @@ trait MilestoneOp {
     owner: String,
     repo: String,
     option: MilestoneListOption = MilestoneListOption()
-  ): Future[List[Milestone]] = {
+  ): Future[Iterable[Milestone]] = {
     val path = s"/repos/$owner/$repo/milestones?state=${option.state}&sort=${option.sort}&direction=${option.direction}"
     exec("GET", path).map(
       _.body match {
-        case JArray(arr) => arr.map(v => Milestone(v))
+        case JArray(arr) => arr.map(v => Milestone(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     )

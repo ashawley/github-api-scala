@@ -1,5 +1,7 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -19,7 +21,7 @@ trait PullRequestOp {
     owner: String,
     repo: String,
     option: PullRequestListOption = PullRequestListOption()
-  ): Future[List[PullRequest]] = {
+  ): Future[Iterable[PullRequest]] = {
     val q = s"?state=${option.state}" +
       s"&sort=${option.sort}" +
       s"&direction=${option.direction}" +
@@ -28,7 +30,7 @@ trait PullRequestOp {
 
     exec("GET", s"/repos/$owner/$repo/pulls$q").map(
       _.body match {
-        case JArray(arr) => arr.map(v => PullRequest(v))
+        case JArray(arr) => arr.map(v => PullRequest(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     )

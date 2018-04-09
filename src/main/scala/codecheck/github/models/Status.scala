@@ -1,6 +1,7 @@
 package codecheck.github
 package models
 
+import scala.collection.immutable.Seq
 import org.json4s.JValue
 import org.json4s.JArray
 
@@ -48,8 +49,8 @@ case class CombinedStatus(value: JValue) extends AbstractJson(value) {
   def state = StatusState.fromString(get("state"))
   def sha = get("sha")
   lazy val statuses = (value \ "statuses") match {
-    case JArray(arr) => arr.map(Status(_))
-    case _ => Nil
+    case JArray(arr) => arr.map(Status(_)).to[Seq]
+    case _ => Seq.empty[Status]
   }
 
   def repository = Repository(value \ "repository")

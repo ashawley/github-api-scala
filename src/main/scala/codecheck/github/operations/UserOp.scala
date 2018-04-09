@@ -1,5 +1,7 @@
 package codecheck.github.operations
 
+import scala.collection.immutable.Iterable
+import scala.collection.immutable.Seq
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.json4s.JArray
@@ -31,11 +33,11 @@ trait UserOp {
     }
   }
 
-  def getAllUsers(since: Long = 0): Future[List[User]] = {
+  def getAllUsers(since: Long = 0): Future[Iterable[User]] = {
     val path = if (since == 0) "/users" else s"/users?since=$since"
     exec("GET", path).map (
       _.body match {
-        case JArray(arr) => arr.map(v => User(v))
+        case JArray(arr) => arr.map(v => User(v)).to[Seq]
         case _ => throw new IllegalStateException()
       }
     )
